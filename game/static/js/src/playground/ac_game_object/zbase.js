@@ -15,11 +15,11 @@ class AcGameObject{
     update(){ //每一帧都会执行
     }
     
-    on_destory(){ //被删除前执行一次
+    on_destroy(){ //被删除前执行一次
     }
 
-    destory(){ //删除该物体
-        this.on_destory();
+    destroy(){ //删除该物体
+        this.on_destroy();
 
         for(let i=0;i<AC_GAME_OBJECT.length;i++){
         if(AC_GAME_OBJECT[i]===this){
