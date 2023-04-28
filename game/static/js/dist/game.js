@@ -127,6 +127,46 @@ class GameMap extends AcGameObject{
         this.ctx.fillRect(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
     }
 }
+class Particle extends AcGameObject{
+    constructor(playground,x,y,radius,vx,vy,color,speed,move_length){
+        super();
+        this.playground=playground;
+        this.ctx=this.playground.game_map.ctx;
+        this.x=x;
+        this.y=y;
+        this.radius=radius;
+        this.vx=vx;
+        this.vy=vy;
+        this.color=color;
+        this.speed=speed;
+        this.move_length=move_length;
+        this.friction=0.9;
+        this.eps=1;
+    }
+
+    start(){
+    }
+
+    update(){
+        if(this.move_length<this.eps||this.speed<this.eps){
+            this.destroy();
+            return false;
+        }
+        let moved=Math.min(this.move_length,this.speed*this.timedelta/1000);
+        this.x+=this.vx*moved;
+        this.y+=this.vy*moved;
+        this.speed*=this.friction;
+        this.move_length-=moved;
+        this.render();
+    }
+
+    render(){
+        this.ctx.beginPath();
+        this.ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+        this.ctx.fillStyle=this.color;
+        this.ctx.fill();
+    }
+}
 class Player extends AcGameObject{
     constructor(playground,x,y,radius,color,speed,is_me){
         super();
@@ -146,6 +186,7 @@ class Player extends AcGameObject{
         this.eps=0.1;
         this.move_length=0;
         this.friction=0.9;
+        this.spent_time=0;
 
         this.cur_skill=null;
     }
@@ -177,6 +218,7 @@ class Player extends AcGameObject{
         });
 
         $(window).keydown(function(e){
+            if (outer.radius < 10) return false; //如果玩家死了，就不能发射火球
             if(e.which===81){ //q键
                 outer.cur_skill="fireball";
                 return false;
@@ -212,6 +254,19 @@ class Player extends AcGameObject{
     }
     
     is_attacked(angle,damage){
+        for(let i=0;i<10+Math.random()*5;i++){
+            let x=this.x;
+            let y=this.y;
+            let radius=this.radius*Math.random()*0.1;
+            let angle = Math.PI * 2 * Math.random();
+            let vx=Math.cos(angle);
+            let vy=Math.sin(angle);
+            let color=this.color;
+            let speed=this.speed*10;
+            let move_length=this.radius*Math.random()*5;
+            new Particle(this.playground,x,y,radius,vx,vy,color,speed,move_length);
+        }
+
         this.radius-=damage;
         if(this.radius<10){
             this.destroy();
@@ -220,9 +275,16 @@ class Player extends AcGameObject{
         this.damage_x=Math.cos(angle);
         this.damage_y=Math.sin(angle);
         this.damage_speed=damage*50;
+
     }
 
     update(){
+        this.spent_time+=this.timedelta/1000;
+        if(!this.is_me && this.spent_time>4 && Math.random()<1/210.0){
+            let player=this.playground.players[0];
+            this.shoot_fireball(player.x,player.y);
+        }
+
         if(this.damage_speed>10){
             this.vx=0;
             this.vy=0;
@@ -257,6 +319,14 @@ class Player extends AcGameObject{
         this.ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
         this.ctx.fillStyle=this.color;
         this.ctx.fill();
+    }
+
+    on_destroy(){
+        for(let i=0;i<this.playground.players.length;i++){
+            if(this.playground.players[i]===this){
+                this.playground.players.splice(i,1);
+            }
+        }
     }
 }
 class FireBall extends AcGameObject{
@@ -342,11 +412,17 @@ class AcGamePlayground{
 
         this.players=[];
         this.players.push(new Player(this,this.width/2,this.height/2,this.height*0.05,"white",this.height*0.15,true));
-        this.start();
         
         for(let i=0;i<5;i++){
-            this.players.push(new Player(this,this.width/2,this.height/2,this.height*0.05,"blue",this.height*0.15,false));
+            this.players.push(new Player(this,this.width/2,this.height/2,this.height*0.05,this.get_random_color(),this.height*0.15,false));
+
+        this.start();
         }
+    }
+
+    get_random_color(){
+        let colors=["blue","yellow","green","red","pink"];
+        return colors[Math.floor(Math.random()*5)];
     }
 
     start(){
