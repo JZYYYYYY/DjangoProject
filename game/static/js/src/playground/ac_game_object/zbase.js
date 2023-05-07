@@ -7,6 +7,17 @@ class AcGameObject{
         this.has_called_start=false; //是否执行过start
         this.timedelta=0; //当前距离上一帧的时间
 
+        this.uuid=this.create_uuid();
+
+    }
+
+    create_uuid(){
+        let res="";
+        for(let i=0;i<20;i++){
+            let x=parseInt(Math.floor(Math.random()*10));
+            res+=x;
+        }
+        return res;
     }
 
     start(){ //只在第一帧执行

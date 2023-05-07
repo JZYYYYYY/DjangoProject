@@ -184,7 +184,10 @@ class Settings{
     }
 
     logout_on_remote(){ //在远程服务器上登出
-        if(this.platform==="ACAPP") return false;
+        if(this.platform==="ACAPP"){
+            this.root.AcWingOS.api.window.close();
+        }
+        else{
         $.ajax({
             url:"https://app5353.acapp.acwing.com.cn/settings/logout/",
             type:"GET",
@@ -195,6 +198,7 @@ class Settings{
                 }
             }
         });
+        }
     }
 
     register_on_remote(){ //在远程服务器上注册
@@ -214,7 +218,7 @@ class Settings{
             },
             success: function(resp) {
                 console.log(resp);
-                if (resp.result === "success") {
+               if (resp.result === "success") {
                     location.reload();  // 刷新页面
                 } 
                 else {

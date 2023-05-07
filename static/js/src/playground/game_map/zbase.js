@@ -10,6 +10,7 @@ class GameMap extends AcGameObject{
     }
 
     start(){
+        this.$canvas.focus();
     }
 
     resize(){

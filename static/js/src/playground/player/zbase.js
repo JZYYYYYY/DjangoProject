@@ -1,5 +1,5 @@
 class Player extends AcGameObject{
-    constructor(playground,x,y,radius,color,speed,is_me){
+    constructor(playground,x,y,radius,color,speed,character,username,photo){
         super();
         this.playground=playground;
         this.ctx=this.playground.game_map.ctx;
@@ -13,24 +13,28 @@ class Player extends AcGameObject{
         this.radius=radius;
         this.color=color;
         this.speed=speed;
-        this.is_me=is_me;
+        this.character=character;
+        this.username=username;
+        this.photo=photo;
         this.eps=0.01;
         this.move_length=0;
         this.friction=0.9;
         this.spent_time=0;
+        this.cd_time=1;
+        this.fireballs=[];
 
         this.cur_skill=null;
         
-        if(this.is_me){
+        if(this.character!=="robot"){
             this.img = new Image();
-            this.img.src = this.playground.root.settings.photo;
+            this.img.src = this.photo;
         }
     }
     
     start(){
-        if(this.is_me){
+        if(this.character==="me"){
             this.add_listening_events();
-        }else{
+        }else if(this.character==="robot"){
             let tx=Math.random()*this.playground.width/this.playground.scale;
             let ty=Math.random()*this.playground.height/this.playground.scale;
             this.move_to(tx,ty);
@@ -45,10 +49,22 @@ class Player extends AcGameObject{
         this.playground.game_map.$canvas.mousedown(function(e){
             const rect=outer.ctx.canvas.getBoundingClientRect();
             if(e.which===3){
-                outer.move_to((e.clientX-rect.left)/outer.playground.scale,(e.clientY-rect.top)/outer.playground.scale);
-            } else if(e.which===1){
+                let tx=(e.clientX-rect.left)/outer.playground.scale;
+                let ty=(e.clientY-rect.top)/outer.playground.scale;
+                outer.move_to(tx,ty);
+
+                if(outer.playground.mode==="multi mode"){
+                    outer.playground.mps.send_move_to(tx,ty);
+                }
+            } 
+            else if(e.which===1){
+                let tx=(e.clientX-rect.left)/outer.playground.scale;
+                let ty=(e.clientY-rect.top)/outer.playground.scale;
                 if(outer.cur_skill==="fireball"){
-                    outer.shoot_fireball((e.clientX-rect.left)/outer.playground.scale,(e.clientY-rect.top)/outer.playground.scale);
+                    let fireball=outer.shoot_fireball(tx,ty);
+                    if(outer.playground.mode==="multi mode"){
+                        outer.playground.mps.send_shoot_fireball(tx,ty,fireball.uuid);
+                    }
                 }
                 outer.cur_skill=null;
             }
@@ -56,8 +72,10 @@ class Player extends AcGameObject{
 
         $(window).keydown(function(e){
             if (outer.radius < outer.eps) return false; //如果玩家死了，就不能发射火球
-            if(e.which===81){ //q键
+            
+            if(e.which===81 && outer.cd_time>=1 && outer.spent_time>=4){ //q键
                 outer.cur_skill="fireball";
+                outer.cd_time-=1;
                 return false;
             }
         });
@@ -73,8 +91,19 @@ class Player extends AcGameObject{
         let color="orange";
         let speed=0.5;
         let move_length=1;
-        new FireBall(this.playground,this,x,y,radius,vx,vy,color,speed,move_length,0.01);
+        let fireball=new FireBall(this.playground,this,x,y,radius,vx,vy,color,speed,move_length,0.01);
+        this.fireballs.push(fireball);
+        return fireball;
+    }
 
+    destroy_fireball(uuid){
+        for(let i=0;i<this.fireballs.length;i++){
+            let fireball=this.fireballs[i];
+            if(fireball.uuid===uuid){
+                fireball.destroy();
+                break;
+            }
+        }
     }
 
     get_dist(x1,y1,x2,y2){
@@ -116,6 +145,13 @@ class Player extends AcGameObject{
 
     }
 
+    receive_attack(x,y,angle,damage,ball_uuid,attacker){
+        attacker.destroy_fireball(ball_uuid);
+        this.x=x;
+        this.y=y;
+        this.is_attacked(angle,damage);
+    }
+
     update(){
 		this.update_move();
         this.render();
@@ -123,8 +159,11 @@ class Player extends AcGameObject{
 
     update_move(){ //更新玩家移动
         this.spent_time += this.timedelta / 1000;
-        if (!this.is_me && this.spent_time > 4 && Math.random() < 1 / 120.0) {
-			let player=this.playground.players[0];
+        if(this.cd_time<=1){
+             this.cd_time+=this.timedelta/1000;
+        }
+        if (this.character==="robot" && this.spent_time>4 && Math.random()<1/120.0){
+            let player=this.playground.players[0];
             this.shoot_fireball(player.x,player.y);
         }
 		if (this.damage_speed > this.eps*10) {
@@ -138,7 +177,7 @@ class Player extends AcGameObject{
             if (this.move_length < this.eps) {
                 this.move_length = 0;
                 this.vx = this.vy = 0;
-                if (!this.is_me) {
+                if (this.character==="robot") {
 					let tx = Math.random() * this.playground.width / this.playground.scale;
                     let ty = Math.random() * this.playground.height / this.playground.scale;
                     this.move_to(tx, ty);
@@ -156,7 +195,7 @@ class Player extends AcGameObject{
 
     render(){
 		let scale=this.playground.scale;
-        if(this.is_me){
+        if(this.character!=="robot"){
             this.ctx.save();
             this.ctx.beginPath();
             this.ctx.arc(this.x*scale, this.y*scale, this.radius*scale, 0, Math.PI * 2, false);
@@ -177,6 +216,7 @@ class Player extends AcGameObject{
         for(let i=0;i<this.playground.players.length;i++){
             if(this.playground.players[i]===this){
                 this.playground.players.splice(i,1);
+                break;
             }
         }
     }
