@@ -122,7 +122,7 @@ class Settings{
 
         this.$acwing_login.click(function(){
             outer.acwing_login();
-        })
+        });
     }
 
     add_listening_events_login(){
@@ -132,7 +132,7 @@ class Settings{
         });
         this.$login_submit.click(function(){
             outer.login_on_remote();
-        })
+        });
     }
 
     add_listening_events_register(){
@@ -147,7 +147,7 @@ class Settings{
 
     acwing_login(){
         $.ajax({
-            url:"https://app5353.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
+            url:"https://app5353.acapp.acwing.com.cn/settings/acwing/web/apply_code",
             type:"GET",
             success:function(resp){
                 console.log(resp);

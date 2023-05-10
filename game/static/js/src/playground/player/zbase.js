@@ -23,7 +23,7 @@ class Player extends AcGameObject{
         this.fireballs=[];
 
         this.cur_skill=null;
-        
+
         if(this.character!=="robot"){
             this.img = new Image();
             this.img.src = this.photo;
@@ -39,7 +39,7 @@ class Player extends AcGameObject{
             this.flash_img.src="https://cdn.acwing.com/media/article/image/2021/12/02/1_daccabdc53-blink.png";
         }
     }
-    
+
     start(){
         this.playground.player_count++;
         this.playground.notice_board.write("已就绪:"+this.playground.player_count+"人");
@@ -122,7 +122,7 @@ class Player extends AcGameObject{
 
             if (outer.radius < outer.eps) 
                 return false; //如果玩家死了，就不能发射火球
-            
+
             if(e.which===81){ //q键
                 if(outer.fireball_cd>outer.eps)
                     return true;
@@ -137,7 +137,7 @@ class Player extends AcGameObject{
             }
         });
     }
-    
+
     shoot_fireball(tx,ty){
         let x=this.x;
         let y=this.y;
@@ -188,7 +188,7 @@ class Player extends AcGameObject{
         this.vx=Math.cos(angle);
         this.vy=Math.sin(angle);
     }
-    
+
     is_attacked(angle,damage){
         for(let i=0;i<10+Math.random()*5;i++){
             let x=this.x;
@@ -224,11 +224,20 @@ class Player extends AcGameObject{
 
     update(){
         this.spent_time += this.timedelta / 1000;
+        this.update_win();
+
         if(this.character==="me" && this.playground.state==="fighting"){
             this.update_cd();
         }
-		this.update_move();
+        this.update_move();
         this.render();
+    }
+
+    update_win(){
+        if(this.playground.state==="fighting" && this.character==="me" && this.playground.players.length===1){
+            this.playground.state="over";
+            this.playground.score_board.win();
+        }
     }
 
     update_cd(){
@@ -244,24 +253,24 @@ class Player extends AcGameObject{
             let player=this.playground.players[0];
             this.shoot_fireball(player.x,player.y);
         }
-		if (this.damage_speed > this.eps*10) {
+        if (this.damage_speed > this.eps*10) {
             this.vx = this.vy = 0;
             this.move_length = 0;
             this.x += this.damage_x * this.damage_speed * this.timedelta / 1000;
             this.y += this.damage_y * this.damage_speed * this.timedelta / 1000;
             this.damage_speed *= this.friction;
-        } 
-		else {
+        }
+        else {
             if (this.move_length < this.eps) {
                 this.move_length = 0;
                 this.vx = this.vy = 0;
                 if (this.character==="robot") {
-					let tx = Math.random() * this.playground.width / this.playground.scale;
+                    let tx = Math.random() * this.playground.width / this.playground.scale;
                     let ty = Math.random() * this.playground.height / this.playground.scale;
                     this.move_to(tx, ty);
                 }
-            } 
-			else {
+            }
+            else {
                 let moved = Math.min(this.move_length, this.speed * this.timedelta / 1000);
                 this.x += this.vx * moved;
                 this.y += this.vy * moved;
@@ -272,7 +281,7 @@ class Player extends AcGameObject{
     }
 
     render(){
-		let scale=this.playground.scale;
+        let scale=this.playground.scale;
         if(this.character!=="robot"){
             this.ctx.save();
             this.ctx.beginPath();
@@ -338,7 +347,10 @@ class Player extends AcGameObject{
 
     on_destroy(){
         if(this.character==="me"){
-            this.playground.state="over";
+            if(this.playground.state==="fighting"){
+                this.playground.state="over";
+                this.playground.score_board.lose();
+            }
         }
         for(let i=0;i<this.playground.players.length;i++){
             if(this.playground.players[i]===this){

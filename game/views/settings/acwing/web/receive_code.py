@@ -23,7 +23,7 @@ def receive_code(request):
         'code': code
     }
 
-    access_token_res = requests.get(apply_access_token_url, params=params).json()
+    access_token_res = requests.get(apply_access_token_url,params=params).json()
 
     access_token = access_token_res['access_token']
     openid = access_token_res['openid']
