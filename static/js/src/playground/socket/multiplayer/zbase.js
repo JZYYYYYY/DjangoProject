@@ -2,7 +2,7 @@ class MultiPlayerSocket{
     constructor(playground){
         this.playground=playground;
 
-        this.ws=new WebSocket("wss://app5353.acapp.acwing.com.cn/wss/multiplayer/");
+        this.ws=new WebSocket("wss://app5353.acapp.acwing.com.cn/wss/multiplayer/?token=" + playground.root.access);
 
         this.start();
     }
@@ -49,7 +49,7 @@ class MultiPlayerSocket{
             'photo':photo,
         }));
     }
-    
+
     get_player(uuid){
         let players=this.playground.players;
         for(let i=0;i<players.length;i++){
