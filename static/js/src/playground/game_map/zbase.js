@@ -16,7 +16,7 @@ class GameMap extends AcGameObject{
     resize(){
         this.ctx.canavs.width=this.playground.width;
         this.ctx.canvas.height=this.playground.height;
-        this.ctx.fillStyle="rgba(0,0,0,1)";
+        this.ctx.fillStyle="rgba(135,206,250,1)";
         this.ctx.fillRect(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
     }
 
@@ -25,7 +25,7 @@ class GameMap extends AcGameObject{
     }
 
     render(){
-        this.ctx.fillStyle="rgba(0,0,0,0.2)";
+        this.ctx.fillStyle="rgba(135,206,250,0.2)";
         this.ctx.fillRect(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
     }
 }

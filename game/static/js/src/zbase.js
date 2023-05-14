@@ -5,7 +5,6 @@ export class AcGame{
         this.AcWingOS=AcWingOS;
         this.access=access;
         this.refresh=refresh;
-
         this.settings=new Settings(this);
         this.menu=new AcGameMenu(this);
         this.playground=new AcGamePlayground(this);

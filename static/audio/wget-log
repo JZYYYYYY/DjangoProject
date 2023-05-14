@@ -1,0 +1,11 @@
+--2023-05-14 13:43:23--  https://music.163.com/
+Resolving music.163.com (music.163.com)... 59.111.160.195, 59.111.19.33
+Connecting to music.163.com (music.163.com)|59.111.160.195|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 141393 (138K) [text/html]
+Saving to: 'fbg.mp3'
+
+fbg.mp3                                     0%[                                                                                    ]       0  --.-KB/s               fbg.mp3                                   100%[===================================================================================>] 138.08K  --.-KB/s    in 0.01s   
+
+2023-05-14 13:43:23 (13.6 MB/s) - 'fbg.mp3' saved [141393/141393]
+

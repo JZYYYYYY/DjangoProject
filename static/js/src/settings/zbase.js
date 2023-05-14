@@ -32,14 +32,6 @@ class Settings{
         <div class="ac-game-settings-option">
             注册
         </div>
-        <br>
-        <div class="ac-game-settings-acwing">
-            <img width="30" src="https://app5353.acapp.acwing.com.cn/static/image/settings/acwing_logo.png">
-            <br>
-            <div>
-                AcWing一键登录
-            </div>
-        </div>
     </div>
     <div class="ac-game-settings-register">
         <div class="ac-game-settings-title">
@@ -69,14 +61,6 @@ class Settings{
         </div>
         <div class="ac-game-settings-option">
             登录
-        </div>
-        <br>
-        <div class="ac-game-settings-acwing">
-            <img width="30" src="https://app5353.acapp.acwing.com.cn/static/image/settings/acwing_logo.png">
-            <br>
-            <div>
-                AcWing一键登录
-            </div>
         </div>
     </div>
 </div>

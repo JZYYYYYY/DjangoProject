@@ -1,7 +1,7 @@
 .ac-game-settings{
     width:100%;
     height:100%;
-    background-image: url("/static/image/menu/background.gif");
+    background-image: url("/static/image/menu/flbg.jpg");
     background-size:100% 100%;
     user-select:none;
 }
@@ -89,22 +89,6 @@
     cursor: pointer;
 }
 
-.ac-game-settings-acwing > img {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    display: block;
-}
-
-.ac-game-settings-acwing > div {
-    color: white;
-    font-size: 1.5vh;
-    text-align: center;
-    display: block;
-}
-
 .ac-game-settings-register{
     height: 49vh;
     width: 20vw;
@@ -119,7 +103,7 @@
 .ac-game-menu{
     width:100%;
     height:100%;
-    background-image: url("/static/image/menu/background.gif");
+    background-image: url("/static/image/menu/flbg.jpg");
     background-size:100% 100%;
     user-select:none;
 }

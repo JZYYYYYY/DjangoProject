@@ -211,7 +211,7 @@ class Player extends AcGameObject{
         this.speed*=1.1;
         this.damage_x=Math.cos(angle);
         this.damage_y=Math.sin(angle);
-        this.damage_speed=damage*50;
+        this.damage_speed=damage*80;
 
     }
 
@@ -230,6 +230,7 @@ class Player extends AcGameObject{
             this.update_cd();
         }
         this.update_move();
+        this.update_map_view();
         this.render();
     }
 
@@ -237,6 +238,17 @@ class Player extends AcGameObject{
         if(this.playground.state==="fighting" && this.character==="me" && this.playground.players.length===1){
             this.playground.state="over";
             this.playground.score_board.win();
+        }
+    }
+
+    update_map_view(){
+        if(this.character === "me"){
+            this.playground.cx = this.x - this.playground.width / 2 / this.playground.scale;
+            this.playground.cy = this.y - 0.5;
+            this.playground.cx = Math.max(0, this.playground.cx);
+            this.playground.cx = Math.min(this.playground.virtual_width - this.playground.width / this.playground.scale, this.playground.cx);
+            this.playground.cy = Math.max(0, this.playground.cy);
+            this.playground.cy = Math.min(this.playground.virtual_height - 1, this.playground.cy);
         }
     }
 

@@ -1,0 +1,6 @@
+--2023-05-13 20:40:40--  https://img1.baidu.com/it/u=2124097849,2819804551
+Resolving img1.baidu.com (img1.baidu.com)... 58.216.27.35, 240e:f7:c000:306::7ae4:7323
+Connecting to img1.baidu.com (img1.baidu.com)|58.216.27.35|:443... connected.
+HTTP request sent, awaiting response... 400 Bad Request
+2023-05-13 20:40:40 ERROR 400: Bad Request.
+
