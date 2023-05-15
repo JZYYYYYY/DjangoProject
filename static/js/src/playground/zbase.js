@@ -4,6 +4,8 @@ class AcGamePlayground{
         this.$playground=$(`<div class="ac-game-playground"></div>`);
         this.hide();
         this.root.$ac_game.append(this.$playground);
+        this.cx=0;
+        this.cy=0;
         this.start();
     }
 
@@ -67,11 +69,11 @@ class AcGamePlayground{
         this.player_count=0;
 
         this.players=[];
-        this.players.push(new Player(this,this.width/2/this.scale,0.5,0.05,"white",0.15,"me",this.root.settings.username,this.root.settings.photo));
+        this.players.push(new Player(this,this.virtual_width/2,this.virtual_height/2,0.05,"white",0.25,"me",this.root.settings.username,this.root.settings.photo));
         
         if(mode==="single mode"){
             for(let i=0;i<8;i++){
-                this.players.push(new Player(this,this.width/this.scale*Math.random(),Math.random(),0.05,this.get_random_color(),0.15,"robot"));
+                this.players.push(new Player(this,this.virtual_width*Math.random(),this.virtual_height*Math.random(),0.05,this.get_random_color(),0.25,"robot"));
             }
         }
         else if(mode==="multi mode"){

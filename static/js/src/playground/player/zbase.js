@@ -52,8 +52,8 @@ class Player extends AcGameObject{
         if(this.character==="me"){
             this.add_listening_events();
         }else if(this.character==="robot"){
-            let tx=Math.random()*this.playground.width/this.playground.scale;
-            let ty=Math.random()*this.playground.height/this.playground.scale;
+            let tx=Math.random()*this.playground.virtual_width;
+            let ty=Math.random()*this.playground.virtual_height;
             this.move_to(tx,ty);
         }
     }
@@ -72,6 +72,8 @@ class Player extends AcGameObject{
             if(e.which===3){
                 let tx=(e.clientX-rect.left)/outer.playground.scale;
                 let ty=(e.clientY-rect.top)/outer.playground.scale;
+                tx+=outer.playground.cx;
+                ty+=outer.playground.cy;
                 outer.move_to(tx,ty);
 
                 if(outer.playground.mode==="multi mode"){
@@ -82,6 +84,8 @@ class Player extends AcGameObject{
                 let tx=(e.clientX-rect.left)/outer.playground.scale;
                 let ty=(e.clientY-rect.top)/outer.playground.scale;
                 if(outer.cur_skill==="fireball"){
+                    tx+=outer.playground.cx;
+                    ty+=outer.playground.cy;
                     if(outer.fireball_cd>outer.eps)
                         return false;
 
@@ -91,6 +95,8 @@ class Player extends AcGameObject{
                     }
                 }
                 else if(outer.cur_skill==="flash"){
+                    tx+=outer.playground.cx;
+                    ty+=outer.playground.cy;
                     if(outer.flash_cd>outer.eps)
                         return false;
 
@@ -146,7 +152,7 @@ class Player extends AcGameObject{
         let vx=Math.cos(angle);
         let vy=Math.sin(angle);
         let color="orange";
-        let speed=0.5;
+        let speed=0.6;
         let move_length=1;
         let fireball=new FireBall(this.playground,this,x,y,radius,vx,vy,color,speed,move_length,0.01);
         this.fireballs.push(fireball);
@@ -244,11 +250,11 @@ class Player extends AcGameObject{
     update_map_view(){
         if(this.character === "me"){
             this.playground.cx = this.x - this.playground.width / 2 / this.playground.scale;
-            this.playground.cy = this.y - 0.5;
+            this.playground.cy = this.y-0.5 ;
             this.playground.cx = Math.max(0, this.playground.cx);
             this.playground.cx = Math.min(this.playground.virtual_width - this.playground.width / this.playground.scale, this.playground.cx);
             this.playground.cy = Math.max(0, this.playground.cy);
-            this.playground.cy = Math.min(this.playground.virtual_height - 1, this.playground.cy);
+            this.playground.cy = Math.min(this.playground.virtual_height-1, this.playground.cy);
         }
     }
 
@@ -277,8 +283,8 @@ class Player extends AcGameObject{
                 this.move_length = 0;
                 this.vx = this.vy = 0;
                 if (this.character==="robot") {
-                    let tx = Math.random() * this.playground.width / this.playground.scale;
-                    let ty = Math.random() * this.playground.height / this.playground.scale;
+                    let tx = Math.random() * this.playground.virtual_width;
+                    let ty = Math.random() * this.playground.virtual_height;
                     this.move_to(tx, ty);
                 }
             }
@@ -297,15 +303,15 @@ class Player extends AcGameObject{
         if(this.character!=="robot"){
             this.ctx.save();
             this.ctx.beginPath();
-            this.ctx.arc(this.x*scale, this.y*scale, this.radius*scale, 0, Math.PI * 2, false);
+            this.ctx.arc((this.x-this.playground.cx)*scale, (this.y-this.playground.cy)*scale, this.radius*scale, 0, Math.PI * 2, false);
             this.ctx.stroke();
             this.ctx.clip();
-            this.ctx.drawImage(this.img, (this.x - this.radius)*scale,(this.y - this.radius)*scale, this.radius * 2*scale, this.radius * 2*scale);
+            this.ctx.drawImage(this.img, (this.x -this.playground.cx- this.radius)*scale,(this.y -this.playground.cy- this.radius)*scale, this.radius * 2*scale, this.radius * 2*scale);
             this.ctx.restore();
         }
         else{
             this.ctx.beginPath();
-            this.ctx.arc(this.x*scale,this.y*scale,this.radius*scale,0,Math.PI*2,false);
+            this.ctx.arc((this.x-this.playground.cx)*scale,(this.y-this.playground.cy)*scale,this.radius*scale,0,Math.PI*2,false);
             this.ctx.fillStyle=this.color;
             this.ctx.fill();
         }
