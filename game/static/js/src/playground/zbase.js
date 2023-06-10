@@ -51,6 +51,7 @@ class AcGamePlayground{
 
 
         if(this.game_map) this.game_map.resize();
+        if(this.mini_map) this.mini_map.resize();
     }
 
     show(mode){ //打开playground界面
@@ -109,6 +110,11 @@ class AcGamePlayground{
             if(this.score_board){
                 this.score_board.destroy();
                 this.score_board=null;
+            }
+
+            if(this.mini_map){
+                this.mini_map.destroy();
+                this.mini_map=null;
             }
 
             this.$playground.empty();
